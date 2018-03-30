@@ -1,0 +1,95 @@
+html
+{
+	background-color: rgb(240, 240, 240);
+	font-family: 'Roboto', sans-serif;
+}
+h1
+{
+    font-size: 48pt;
+}
+body
+{
+	text-align: center;
+}
+h2
+{
+    padding-top: 1%;
+    font-size: 32pt;
+}
+p
+{
+    padding-left: 20%;
+    padding-right: 20%;
+}
+p, li
+{
+    font-size: 16pt;
+}
+img.imagen
+{
+    opacity: .75;
+    transition: all .25s ease-in-out;
+}
+img.imagen:hover
+{
+    opacity: 1;
+    cursor: pointer;
+}
+img#imagenPreview
+{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 500px;
+    height: 300px;
+}
+img#imagenPreview:hover
+{
+    transform: scale(1.1);
+}
+img#github, img#drive
+{
+    width: 128px;
+    height: 128px;
+}
+a#imagenDescarga
+{
+    width: 128px;
+    margin: 0 auto;
+    display: block;
+}
+div.sidebar
+{
+    width: 15%;
+    position: fixed;
+    z-index: 1;
+    top: 33%;
+    left: 1%;
+    background: white;
+    overflow-x: hidden;
+    padding: 8px 0;
+    border-radius: 5px;
+}
+div.sidebar a 
+{
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #2196F3;
+    display: block;
+    text-align: left;
+}
+div.sidebar a:hover 
+{
+    color: #064579;
+}
+footer 
+{
+    font-size: 16pt;
+	padding: 1%;
+    color: white;
+    background-color: black;
+    clear: left;
+    text-align: center;
+    border-radius: 5px;
+}
