@@ -31,3 +31,11 @@ PLAYER_HIT_RECT = pygame.Rect(0, 0, 35, 35)
 
 # HUD
 ITEMS_BG = 64
+
+# Music
+MAIN_MENU = 'Bobber_Loop.wav'
+FIRST_LEVEL = 'Patakas_World.wav'
+SECOND_LEVEL = 'My_Little_Adventure.mp3'
+
+# SFX
+STEPS = ['Step1.wav', 'Step2.wav', 'Step3.wav']
