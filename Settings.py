@@ -1,8 +1,6 @@
 import pygame
 import colorsys
 
-#vec = pygame.math.Vector2
-
 # Colores
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -18,6 +16,8 @@ HEIGHT = 720
 FPS = 60
 TITLE = "Doggo tilemap demo"
 BGCOLOR = DARKGREY
+BOTTOM = "Bottom.tmx"
+TOP = "Top.tmx"
 
 # Tiles
 TILESIZE = 64
@@ -29,8 +29,13 @@ PLAYER_SPEED = 350
 PLAYER_IMG = 'doggo.png'
 PLAYER_HIT_RECT = pygame.Rect(0, 0, 35, 35)
 
+# Items
+ITEM_IMAGES = {'1': '1.png'}
+
 # HUD
 ITEMS_BG = 64
+BUBBLE_HEIGHT = 240
+BUBBLE_WIDTH = 1024
 
 # Music
 MAIN_MENU = 'Bobber_Loop.wav'

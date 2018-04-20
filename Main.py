@@ -3,7 +3,7 @@ import sys
 from os import path
 from Settings import *
 from Sprites import *
-from Maps import *
+from Map1 import *
 
 class Game:
     def __init__(self):
@@ -25,11 +25,16 @@ class Game:
         self.font = path.join(font_folder, 'GOODDP__.TTF')
         self.dim_screen = pygame.Surface(self.screen.get_size()).convert_alpha()
         self.dim_screen.fill((0, 0, 0, 150))
-        self.map = TiledMap(path.join(maps_folder, 'Bottom.tmx'))
+        self.map = TiledMap(path.join(maps_folder, BOTTOM))
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
         self.player_img = pygame.image.load(path.join(images_folder, PLAYER_IMG)).convert_alpha()
+        self.item_images = {}
         self.paused = False
+        self.text_bubble = False
+
+        for item in ITEM_IMAGES:
+            self.item_images[item] = pygame.image.load(path.join(images_folder, ITEM_IMAGES[item]))
 
         pygame.mixer.music.load(path.join(music_folder, FIRST_LEVEL))
 
@@ -42,6 +47,7 @@ class Game:
     def new(self):
         self.all_sprites = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
+        self.items = pygame.sprite.Group()
 
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == 'Player':
@@ -69,15 +75,21 @@ class Game:
     def update(self):
         self.all_sprites.update()
         self.camera.update(self.player)
+        print(self.player.hit_rect.center)
 
-    def draw_player_health(surf, x, y):
+    def draw_gui(self, x, y):
         outline_rect = pygame.Rect(x, y, ITEMS_BG, ITEMS_BG)
-        outline_outline_rect = pygame.Rect(x, y, ITEMS_BG, ITEMS_BG)
-        pygame.draw.rect(surf, BLACK, outline_rect)
-        pygame.draw.rect(surf, WHITE, outline_outline_rect, 2)
+        pygame.draw.rect(self.screen, BLACK, outline_rect)
+        pygame.draw.rect(self.screen, WHITE, outline_rect, 2)
 
-    def draw_text(self, text, font_name, size, color, x, y, align = "nw"):
-        font = pg.font.Font(font_name, size)
+    def draw_bubble(self):
+        outline_rect = pygame.Rect(128, 470, BUBBLE_WIDTH, BUBBLE_HEIGHT)
+        pygame.draw.rect(self.screen, BLACK, outline_rect)
+        pygame.draw.rect(self.screen, WHITE, outline_rect, 4)
+        self.draw_text("Aqui va a ir texto", self.font, 50, WHITE, WIDTH / 2, 546, align = "center")
+
+    def draw_text(self, text, font_name, size, color, x, y, align):
+        font = pygame.font.Font(font_name, size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
         if align == "nw":
@@ -107,12 +119,15 @@ class Game:
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
 
-        #for i in range(10, 500, 75):
-            #self.draw_player_health(self.screen, 10, 10)
+        for i in range(10, 500, 75):
+            self.draw_gui(i, 10)
 
         if self.paused:
             self.screen.blit(self.dim_screen, (0, 0))
             self.draw_text("Pausa", self.font, 125, WHITE, WIDTH / 2, HEIGHT / 2, align = "center")
+
+        if self.text_bubble:
+            self.draw_bubble()
 
         pygame.display.flip()
 
@@ -123,9 +138,11 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.quit()
-                if event.key == pg.K_p:
+                if event.key == pygame.K_p:
                     self.paused = not self.paused
                     pygame.mixer.music.set_volume(.1)
+                if event.key == pygame.K_z:
+                    self.text_bubble = not self.text_bubble
 
     def show_start_screen(self):
         pass

@@ -1,7 +1,7 @@
 import pygame
 from random import uniform
-from settings import *
-from tilemap import collide_hit_rect
+from Settings import *
+from Map1 import collide_hit_rect
 from random import choice, random
 
 vec = pygame.math.Vector2
@@ -19,9 +19,6 @@ class Player(pygame.sprite.Sprite):
 
         self.vel = vec(0, 0)
         self.pos = vec(x, y)
-        self.rot = 0
-        self.last_shot = 0
-        self.health = PLAYER_HEALTH
 
     def collide_with_walls(sprite, group, dir):
         if dir == 'x':
@@ -93,6 +90,7 @@ class Player(pygame.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         self.collide_with_walls(self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
+        #print(self.rect.center)
 
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
@@ -105,3 +103,13 @@ class Obstacle(pygame.sprite.Sprite):
         self.y = y
         self.rect.x = x
         self.rect.y = y
+
+class Item(pygame.sprite.Sprite):
+    def __init__(self, game, pos, type):
+        self.groups = game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = game.item_images[type]
+        self.rect = self.image.get_rect()
+        self.type = type
+        self.rect.center = pos
