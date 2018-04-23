@@ -55,12 +55,12 @@ class Player(pygame.sprite.Sprite):
 
         if keys[pygame.K_LEFT]:
             self.vel = vec(-PLAYER_SPEED, 0)
-            self.image = pygame.transform.flip(self.game.player_img, True, False)
+            self.image = pygame.transform.flip(self.game.player_img, False, False)
             self.playerSFX()
 
         if keys[pygame.K_RIGHT]:
             self.vel = vec(PLAYER_SPEED, 0)
-            self.image = pygame.transform.flip(self.game.player_img, False, False)
+            self.image = pygame.transform.flip(self.game.player_img, True, False)
             self.playerSFX()
 
         if keys[pygame.K_UP]:
@@ -113,3 +113,4 @@ class Item(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.type = type
         self.rect.center = pos
+        self.pos = pos

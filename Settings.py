@@ -11,6 +11,7 @@ GREEN = (0, 255, 0)
 YELLOW = (255, 255, 0)
 
 # General
+LOGO = "logoR.png"
 WIDTH = 1280
 HEIGHT = 720
 FPS = 60
@@ -30,7 +31,12 @@ PLAYER_IMG = 'doggo.png'
 PLAYER_HIT_RECT = pygame.Rect(0, 0, 35, 35)
 
 # Items
-ITEM_IMAGES = {'1': '1.png'}
+ITEM_IMAGES = {'Zanahoria': 'Zanahoria.png',
+               'Bone': 'Bone.png',
+               'Croco': 'Croco.png',
+               'Santa': 'Santa.png',
+               'Tubo': 'Tubo.png',
+               'Gusano': 'Gusano.png'}
 
 # HUD
 ITEMS_BG = 64

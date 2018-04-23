@@ -28,6 +28,7 @@ class Game:
         self.map = TiledMap(path.join(maps_folder, BOTTOM))
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
+        self.logo_img = pygame.image.load(path.join(images_folder, LOGO)).convert_alpha()
         self.player_img = pygame.image.load(path.join(images_folder, PLAYER_IMG)).convert_alpha()
         self.item_images = {}
         self.paused = False
@@ -50,10 +51,23 @@ class Game:
         self.items = pygame.sprite.Group()
 
         for tile_object in self.map.tmxdata.objects:
+            obj_center = vec(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
             if tile_object.name == 'Player':
                 self.player = Player(self, tile_object.x, tile_object.y)
             if tile_object.name == 'Wall':
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+            if tile_object.name == 'Zanahoria':
+                Item(self, obj_center, tile_object.name)
+            if tile_object.name == 'Bone':
+                Item(self, obj_center, tile_object.name)
+            if tile_object.name == 'Croco':
+                Item(self, obj_center, tile_object.name)
+            if tile_object.name == 'Gusano':
+                Item(self, obj_center, tile_object.name)
+            if tile_object.name == 'Tubo':
+                Item(self, obj_center, tile_object.name)
+            if tile_object.name == 'Santa':
+                Item(self, obj_center, tile_object.name)
 
         self.camera = Camera(self.map.width, self.map.height)
 
@@ -75,6 +89,11 @@ class Game:
     def update(self):
         self.all_sprites.update()
         self.camera.update(self.player)
+        #Checar si choca con un sprite
+        hits = pygame.sprite.spritecollide(self.player, self.items, False)
+        for hit in hits:
+            if hit.type == 'Load':
+                self.draw_text("Sirve!", self.font, 50, WHITE, WIDTH / 2, 546, align = "center")
         print(self.player.hit_rect.center)
 
     def draw_gui(self, x, y):
@@ -124,7 +143,12 @@ class Game:
 
         if self.paused:
             self.screen.blit(self.dim_screen, (0, 0))
-            self.draw_text("Pausa", self.font, 125, WHITE, WIDTH / 2, HEIGHT / 2, align = "center")
+            self.draw_text("Pausa", self.font, 175, WHITE, WIDTH / 2, 100, align = "center")
+            self.draw_text("Controles:", self.font, 75, WHITE, WIDTH / 2, 300, align = "center")
+            self.draw_text("Flechas para moverse", self.font, 50, WHITE, WIDTH / 2, 400, align = "center")
+            self.draw_text("P = Pausar", self.font, 50, WHITE, WIDTH / 2, 450, align = "center")
+            self.draw_text("Z = Interactuar", self.font, 50, WHITE, WIDTH / 2, 500, align = "center")
+            self.draw_text("ESC = Salir del juego", self.font, 50, WHITE, WIDTH / 2, 550, align = "center")
 
         if self.text_bubble:
             self.draw_bubble()
@@ -145,15 +169,33 @@ class Game:
                     self.text_bubble = not self.text_bubble
 
     def show_start_screen(self):
-        pass
+        showStartScreen = True
+        while(showStartScreen):
+            self.screen.fill(BLACK)
+            self.screen.blit(self.logo_img, (512, 0))
+            self.draw_text("Controles:", self.font, 75, WHITE, WIDTH / 2, 225, align = "center")
+            self.draw_text("Flechas para moverse", self.font, 50, WHITE, WIDTH / 2, 275, align = "center")
+            self.draw_text("P = Pausar", self.font, 50, WHITE, WIDTH / 2, 350, align = "center")
+            self.draw_text("Z = Interactuar", self.font, 50, WHITE, WIDTH / 2, 400, align = "center")
+            self.draw_text("ESC = Salir del juego", self.font, 50, WHITE, WIDTH / 2, 450, align = "center")
+            self.draw_text("Presiona 'Z' para empezar", self.font, 25, WHITE, WIDTH / 2, 650, align = "center")
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.quit()
+                    if event.key == pygame.K_z:
+                        game.run()
+                        showStartScreen == False
+            pygame.display.flip()
 
     def show_go_screen(self):
         pass
 
 game = Game()
-game.show_start_screen()
 
 while True:
     game.new()
-    game.run()
-    game.show_go_screen()
+    game.show_start_screen()
