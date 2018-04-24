@@ -42,7 +42,7 @@ class Game:
         self.steps_sounds = []
         for sfx in STEPS:
             my_sfx = pygame.mixer.Sound(path.join(sfx_folder, sfx))
-            my_sfx.set_volume(.05)
+            my_sfx.set_volume(.02)
             self.steps_sounds.append(my_sfx)
 
     def new(self):
@@ -79,7 +79,7 @@ class Game:
             self.events()
             if not self.paused:
                 self.update()
-                pygame.mixer.music.set_volume(.5)
+                pygame.mixer.music.set_volume(.25)
             self.draw()
 
     def quit(self):
@@ -89,11 +89,13 @@ class Game:
     def update(self):
         self.all_sprites.update()
         self.camera.update(self.player)
-        #Checar si choca con un sprite
+        self.colision = False
         hits = pygame.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
-            if hit.type == 'Load':
-                self.draw_text("Sirve!", self.font, 50, WHITE, WIDTH / 2, 546, align = "center")
+            if hit.type == 'Gusano':
+                print("Sirve!")
+                self.colision = True
+
         print(self.player.hit_rect.center)
 
     def draw_gui(self, x, y):
@@ -162,10 +164,12 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.quit()
+
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
                     pygame.mixer.music.set_volume(.1)
-                if event.key == pygame.K_z:
+
+                if event.key == pygame.K_z and self.colision:
                     self.text_bubble = not self.text_bubble
 
     def show_start_screen(self):

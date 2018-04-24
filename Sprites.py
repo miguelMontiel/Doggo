@@ -106,7 +106,7 @@ class Obstacle(pygame.sprite.Sprite):
 
 class Item(pygame.sprite.Sprite):
     def __init__(self, game, pos, type):
-        self.groups = game.all_sprites
+        self.groups = game.all_sprites, game.items
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.item_images[type]
