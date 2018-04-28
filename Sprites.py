@@ -1,7 +1,7 @@
 import pygame
 from random import uniform
 from Settings import *
-from Map1 import collide_hit_rect
+from Map import collide_hit_rect
 from random import choice, random
 
 vec = pygame.math.Vector2
@@ -16,6 +16,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = (x, y)
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = self.rect.center
+        self.stop_steps = False
 
         self.vel = vec(0, 0)
         self.pos = vec(x, y)
@@ -24,6 +25,7 @@ class Player(pygame.sprite.Sprite):
         if dir == 'x':
             hits = pygame.sprite.spritecollide(sprite, group, False, collide_hit_rect)
             if hits:
+                sprite.stop_steps = True
                 if hits[0].rect.centerx > sprite.hit_rect.centerx:
                     sprite.pos.x = hits[0].rect.left - sprite.hit_rect.width / 2
 
@@ -32,10 +34,13 @@ class Player(pygame.sprite.Sprite):
 
                 sprite.vel.x = 0
                 sprite.hit_rect.centerx = sprite.pos.x
+            else:
+                sprite.stop_steps = False
 
         if dir == 'y':
             hits = pygame.sprite.spritecollide(sprite, group, False, collide_hit_rect)
             if hits:
+                sprite.stop_steps = True
                 if hits[0].rect.centery > sprite.hit_rect.centery:
                     sprite.pos.y = hits[0].rect.top - sprite.hit_rect.height / 2
 
@@ -44,9 +49,11 @@ class Player(pygame.sprite.Sprite):
 
                 sprite.vel.y = 0
                 sprite.hit_rect.centery = sprite.pos.y
+            else:
+                sprite.stop_steps = False
 
     def playerSFX(self):
-        if random() < 0.4:
+        if random() < 0.4 and not self.stop_steps:
             choice(self.game.steps_sounds).play()
 
     def get_keys(self):

@@ -3,7 +3,7 @@ import sys
 from os import path
 from Settings import *
 from Sprites import *
-from Map1 import *
+from Map import *
 
 class Game:
     def __init__(self):
@@ -15,7 +15,8 @@ class Game:
         self.load_data()
 
     def load_data(self):
-        game_folder = path.dirname(__file__)
+        game_folder = path.dirname(path.realpath('__file__'))
+
         maps_folder = path.join(game_folder, 'maps')
         images_folder = path.join(game_folder, 'images')
         music_folder = path.join(game_folder, 'music')
@@ -25,14 +26,50 @@ class Game:
         self.font = path.join(font_folder, 'GOODDP__.TTF')
         self.dim_screen = pygame.Surface(self.screen.get_size()).convert_alpha()
         self.dim_screen.fill((0, 0, 0, 150))
+        self.dim_screen2 = pygame.Surface(self.screen.get_size()).convert_alpha()
+        self.dim_screen2.fill((0, 0, 0, 50))
         self.map = TiledMap(path.join(maps_folder, BOTTOM))
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
+        self.wallpaper_img = pygame.image.load(path.join(images_folder, WALLPAPER)).convert_alpha()
         self.logo_img = pygame.image.load(path.join(images_folder, LOGO)).convert_alpha()
         self.player_img = pygame.image.load(path.join(images_folder, PLAYER_IMG)).convert_alpha()
+        self.doggo_feliz_img = pygame.image.load(path.join(images_folder, DOGGO_FELIZ)).convert_alpha()
+        self.doggo_triste_img = pygame.image.load(path.join(images_folder, DOGGO_TRISTE)).convert_alpha()
+
+        self.zanahoria_img = pygame.image.load(path.join(images_folder, ZANAHORIA)).convert_alpha()
+        self.tubo_img = pygame.image.load(path.join(images_folder, TUBO)).convert_alpha()
+        self.bone_img = pygame.image.load(path.join(images_folder, BONE)).convert_alpha()
+        self.santa_img = pygame.image.load(path.join(images_folder, SANTA)).convert_alpha()
+        self.gusano_img = pygame.image.load(path.join(images_folder, GUSANO)).convert_alpha()
+        self.croco_img = pygame.image.load(path.join(images_folder, CROCO)).convert_alpha()
+
+        self.pause_sfx = pygame.mixer.Sound(path.join(sfx_folder, PAUSE))
+        self.pause_sfx.set_volume(.1)
+        self.item_sfx = pygame.mixer.Sound(path.join(sfx_folder, ITEMGET))
+        self.item_sfx.set_volume(.1)
+        self.hit_sfx = pygame.mixer.Sound(path.join(sfx_folder, HIT))
+        self.hit_sfx.set_volume(.1)
+
         self.item_images = {}
         self.paused = False
-        self.text_bubble = False
+
+        self.zanahoria_conseguido = False
+        self.tubo_conseguido = False
+        self.santa_conseguido = False
+        self.croco_conseguido = False
+        self.bone_conseguido = False
+        self.gusano_conseguido = False
+
+        self.colisionGusano = False
+        self.colisionZanahoria = False
+        self.colisionTubo = False
+        self.colisionSanta = False
+        self.colisionCroco = False
+        self.colisionBone = False
+
+        self.y = HEIGHT
+        self.x = WIDTH
 
         for item in ITEM_IMAGES:
             self.item_images[item] = pygame.image.load(path.join(images_folder, ITEM_IMAGES[item]))
@@ -89,25 +126,57 @@ class Game:
     def update(self):
         self.all_sprites.update()
         self.camera.update(self.player)
-        self.colision = False
+
         hits = pygame.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
             if hit.type == 'Gusano':
-                print("Sirve!")
-                self.colision = True
+                #print(hit.type)
+                self.colisionGusano = True
+                if self.gusano_conseguido:
+                    self.item_sfx.play()
+                    hit.kill()
 
-        print(self.player.hit_rect.center)
+            if hit.type == 'Zanahoria':
+                #print(hit.type)
+                self.colisionZanahoria = True
+                if self.zanahoria_conseguido:
+                    self.item_sfx.play()
+                    hit.kill()
+
+            if hit.type == 'Tubo':
+                #print(hit.type)
+                self.colisionTubo = True
+                if self.tubo_conseguido:
+                    self.item_sfx.play()
+                    hit.kill()
+
+            if hit.type == 'Santa':
+                #print(hit.type)
+                self.colisionSanta = True
+                if self.santa_conseguido:
+                    self.item_sfx.play()
+                    hit.kill()
+
+            if hit.type == 'Croco':
+                #print(hit.type)
+                self.colisionCroco = True
+                if self.croco_conseguido:
+                    self.item_sfx.play()
+                    hit.kill()
+
+            if hit.type == 'Bone':
+                #print(hit.type)
+                self.colisionBone = True
+                if self.bone_conseguido:
+                    self.item_sfx.play()
+                    hit.kill()
+
+        #print(self.player.hit_rect.center)
 
     def draw_gui(self, x, y):
         outline_rect = pygame.Rect(x, y, ITEMS_BG, ITEMS_BG)
         pygame.draw.rect(self.screen, BLACK, outline_rect)
         pygame.draw.rect(self.screen, WHITE, outline_rect, 2)
-
-    def draw_bubble(self):
-        outline_rect = pygame.Rect(128, 470, BUBBLE_WIDTH, BUBBLE_HEIGHT)
-        pygame.draw.rect(self.screen, BLACK, outline_rect)
-        pygame.draw.rect(self.screen, WHITE, outline_rect, 4)
-        self.draw_text("Aqui va a ir texto", self.font, 50, WHITE, WIDTH / 2, 546, align = "center")
 
     def draw_text(self, text, font_name, size, color, x, y, align):
         font = pygame.font.Font(font_name, size)
@@ -140,6 +209,9 @@ class Game:
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
 
+        self.draw_text("Consigue todos los juguetes!", self.font, 50, BLACK, 1052, 682, align = "center")
+        self.draw_text("Consigue todos los juguetes!", self.font, 50, WHITE, 1050, 680, align = "center")
+
         for i in range(10, 500, 75):
             self.draw_gui(i, 10)
 
@@ -152,8 +224,21 @@ class Game:
             self.draw_text("Z = Interactuar", self.font, 50, WHITE, WIDTH / 2, 500, align = "center")
             self.draw_text("ESC = Salir del juego", self.font, 50, WHITE, WIDTH / 2, 550, align = "center")
 
-        if self.text_bubble:
-            self.draw_bubble()
+        if self.zanahoria_conseguido:
+            self.screen.blit(self.zanahoria_img, (20, 10))
+        if self.gusano_conseguido:
+            self.screen.blit(self.gusano_img, (95, 10))
+        if self.tubo_conseguido:
+            self.screen.blit(self.tubo_img, (160, 20))
+        if self.bone_conseguido:
+            self.screen.blit(self.bone_img, (235, 30))
+        if self.santa_conseguido:
+            self.screen.blit(self.santa_img, (320, 10))
+        if self.croco_conseguido:
+            self.screen.blit(self.croco_img, (385, 30))
+
+        if self.zanahoria_conseguido and self.gusano_conseguido and self.tubo_conseguido and self.bone_conseguido and self.santa_conseguido and self.croco_conseguido:
+            self.show_go_screen()
 
         pygame.display.flip()
 
@@ -167,36 +252,79 @@ class Game:
 
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
+                    self.pause_sfx.play()
                     pygame.mixer.music.set_volume(.1)
 
-                if event.key == pygame.K_z and self.colision:
-                    self.text_bubble = not self.text_bubble
+                if event.key == pygame.K_z and self.colisionGusano:
+                    self.gusano_conseguido = True
+
+                if event.key == pygame.K_z and self.colisionZanahoria:
+                    self.zanahoria_conseguido = True
+
+                if event.key == pygame.K_z and self.colisionTubo:
+                    self.tubo_conseguido = True
+
+                if event.key == pygame.K_z and self.colisionSanta:
+                    self.santa_conseguido = True
+
+                if event.key == pygame.K_z and self.colisionCroco:
+                    self.croco_conseguido = True
+
+                if event.key == pygame.K_z and self.colisionBone:
+                    self.bone_conseguido = True
 
     def show_start_screen(self):
-        showStartScreen = True
-        while(showStartScreen):
-            self.screen.fill(BLACK)
-            self.screen.blit(self.logo_img, (512, 0))
-            self.draw_text("Controles:", self.font, 75, WHITE, WIDTH / 2, 225, align = "center")
-            self.draw_text("Flechas para moverse", self.font, 50, WHITE, WIDTH / 2, 275, align = "center")
-            self.draw_text("P = Pausar", self.font, 50, WHITE, WIDTH / 2, 350, align = "center")
-            self.draw_text("Z = Interactuar", self.font, 50, WHITE, WIDTH / 2, 400, align = "center")
-            self.draw_text("ESC = Salir del juego", self.font, 50, WHITE, WIDTH / 2, 450, align = "center")
-            self.draw_text("Presiona 'Z' para empezar", self.font, 25, WHITE, WIDTH / 2, 650, align = "center")
+        self.y -= 10
+        if self.y == -720:
+            self.y = 720
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+        self.screen.blit(self.wallpaper_img, (0, 0))
+        self.screen.blit(self.dim_screen2, (0, 0))
+        self.screen.blit(self.logo_img, (0, 128))
+        self.screen.blit(self.doggo_feliz_img, (850, self.y))
+        self.draw_text("Controles:", self.font, 75, BLACK, (WIDTH / 2) + 5, 230, align = "center")
+        self.draw_text("Flechas para moverse", self.font, 50, BLACK, (WIDTH / 2) + 5, 280, align = "center")
+        self.draw_text("P = Pausar", self.font, 50, BLACK, (WIDTH / 2) + 5, 355, align = "center")
+        self.draw_text("Z = Interactuar", self.font, 50, BLACK, (WIDTH / 2) + 5, 405, align = "center")
+        self.draw_text("ESC = Salir del juego", self.font, 50, BLACK, (WIDTH / 2) + 5, 455, align = "center")
+        self.draw_text("Presiona 'Z' para empezar", self.font, 25, BLACK, (WIDTH / 2) + 3, 653, align = "center")
+
+        self.draw_text("Controles:", self.font, 75, WHITE, WIDTH / 2, 225, align = "center")
+        self.draw_text("Flechas para moverse", self.font, 50, WHITE, WIDTH / 2, 275, align = "center")
+        self.draw_text("P = Pausar", self.font, 50, WHITE, WIDTH / 2, 350, align = "center")
+        self.draw_text("Z = Interactuar", self.font, 50, WHITE, WIDTH / 2, 400, align = "center")
+        self.draw_text("ESC = Salir del juego", self.font, 50, WHITE, WIDTH / 2, 450, align = "center")
+        self.draw_text("Presiona 'Z' para empezar", self.font, 25, WHITE, WIDTH / 2, 650, align = "center")
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
                     self.quit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.quit()
-                    if event.key == pygame.K_z:
-                        game.run()
-                        showStartScreen == False
-            pygame.display.flip()
+                if event.key == pygame.K_z:
+                    pygame.mixer.music.stop()
+                    game.run()
+        pygame.display.flip()
 
     def show_go_screen(self):
-        pass
+        self.screen.blit(self.wallpaper_img, (0, 0))
+        self.screen.blit(self.dim_screen2, (0, 0))
+        self.screen.blit(self.logo_img, (0, 128))
+        self.screen.blit(self.doggo_feliz_img, (850, 0))
+        self.draw_text("¡Gracias por jugar!", self.font, 75, BLACK, (WIDTH / 2) + 5, 230, align = "center")
+        self.draw_text("Presiona ESC para salir", self.font, 50, BLACK, (WIDTH / 2) + 5, 455, align = "center")
+
+        self.draw_text("¡Gracias por jugar!", self.font, 75, WHITE, WIDTH / 2, 225, align = "center")
+        self.draw_text("Presiona ESC para salir", self.font, 50, WHITE, WIDTH / 2, 450, align = "center")
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.quit()
+        pygame.display.flip()
 
 game = Game()
 

@@ -326,25 +326,25 @@
   <object id="71" name="Wall" x="512" y="1088" width="128" height="128"/>
   <object id="72" name="Wall" x="1408" y="1152" width="64" height="64"/>
   <object id="78" name="Wall" x="2560" y="448" width="256" height="256"/>
-  <object id="79" name="Load" x="2240" y="448" width="64" height="256"/>
+  <object id="79" name="Load" x="2432" y="448" width="128" height="256"/>
  </objectgroup>
  <objectgroup name="Jueguetes">
-  <object id="82" name="Zanahoria" x="1536" y="64" width="96" height="96">
+  <object id="82" name="Zanahoria" x="1536" y="128" width="64" height="64">
    <ellipse/>
   </object>
-  <object id="84" name="Bone" x="256" y="64" width="64" height="96">
+  <object id="84" name="Bone" x="256" y="64" width="64" height="64">
    <ellipse/>
   </object>
-  <object id="86" name="Tubo" x="608" y="2208" width="128" height="96">
+  <object id="86" name="Tubo" x="576" y="2176" width="64" height="64">
    <ellipse/>
   </object>
-  <object id="89" name="Croco" x="2720" y="2752" width="96" height="96">
+  <object id="89" name="Croco" x="2752" y="2752" width="64" height="64">
    <ellipse/>
   </object>
-  <object id="90" name="Gusano" x="2592" y="288" width="96" height="96">
+  <object id="90" name="Gusano" x="2624" y="320" width="64" height="64">
    <ellipse/>
   </object>
-  <object id="91" name="Santa" x="576" y="1120" width="96" height="96">
+  <object id="91" name="Santa" x="640" y="1152" width="64" height="64">
    <ellipse/>
   </object>
  </objectgroup>
